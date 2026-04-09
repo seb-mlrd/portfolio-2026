@@ -26,11 +26,11 @@ export default async function MessagesPage() {
       </div>
 
       {messages.length === 0 ? (
-        <div className="border border-[#1e1e1e] p-12 text-center">
+        <div className="border border-border p-12 text-center">
           <p className="font-mono text-sm text-muted tracking-wider">Aucun message pour l'instant.</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-px bg-[#1e1e1e]">
+        <div className="flex flex-col gap-px bg-border">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -40,7 +40,7 @@ export default async function MessagesPage() {
             >
               <div className="flex items-start justify-between gap-4 mb-3">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className="font-mono text-sm font-bold text-[#f0f0f0]">{msg.name}</span>
+                  <span className="font-mono text-sm font-bold text-foreground">{msg.name}</span>
                   <span className="font-mono text-xs text-muted">{msg.email}</span>
                   {!msg.read && (
                     <span className="font-mono text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 bg-accent/10 text-accent border border-accent/30">

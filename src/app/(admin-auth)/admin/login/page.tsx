@@ -53,7 +53,7 @@ function LoginForm() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           {[
-            { name: 'email',    label: 'Email',       type: 'email',    placeholder: 'admin@portfolio.local' },
+            { name: 'email',    label: 'Email',       type: 'email',    placeholder: 'test@test.fr' },
             { name: 'password', label: 'Mot de passe', type: 'password', placeholder: '••••••••' },
           ].map((field) => (
             <div key={field.name} className="flex flex-col gap-2">
@@ -67,7 +67,7 @@ function LoginForm() {
                 onChange={handleChange}
                 required
                 placeholder={field.placeholder}
-                className="bg-transparent border border-[#1e1e1e] px-4 py-3 font-mono text-sm text-[#f0f0f0] focus:outline-none focus:border-accent transition-colors duration-300 placeholder:text-[#333]"
+                className="bg-transparent border border-border px-4 py-3 font-mono text-sm text-foreground focus:outline-none focus:border-accent transition-colors duration-300 placeholder:text-muted/40"
               />
             </div>
           ))}

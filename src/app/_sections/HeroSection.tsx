@@ -41,7 +41,7 @@ export default function HeroSection() {
             style={{
               fontSize: 'clamp(3.5rem, 10vw, 7rem)',
               letterSpacing: '-0.02em',
-              color: '#f0f0f0',
+              color: 'var(--color-foreground)',
               textShadow: '0 0 40px var(--color-accent-glow)',
               animationName: 'fade-up, glow-pulse',
               animationDuration: '0.6s, 3s',
@@ -73,7 +73,7 @@ export default function HeroSection() {
             </a>
             <a
               href="#contact"
-              className="font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-[#1e1e1e] text-muted hover:border-accent hover:text-accent transition-all duration-300"
+              className="font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-border text-muted hover:border-accent hover:text-accent transition-all duration-300"
             >
               Contact
             </a>

@@ -5,7 +5,7 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#1e1e1e] mt-32">
+    <footer className="border-t border-border mt-32">
       <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
         {/* Logo */}
         <span

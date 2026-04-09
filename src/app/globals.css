@@ -6,6 +6,7 @@
   --color-bg-dark: #111116;
   --color-bg-light: #18181f;
   --color-surface: #18181f;
+  --color-foreground: #f0f0f0;
   --color-border: #1e1e1e;
   --color-muted: #606060;
 
@@ -34,8 +35,8 @@
 }
 
 @keyframes glow-pulse {
-  0%, 100% { text-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
-  50% { text-shadow: 0 0 40px rgba(0, 212, 255, 0.6), 0 0 80px rgba(0, 212, 255, 0.2); }
+  0%, 100% { text-shadow: 0 0 20px var(--color-accent-glow); }
+  50% { text-shadow: 0 0 40px var(--color-accent-halo), 0 0 80px var(--color-accent-glow); }
 }
 
 html {
@@ -46,11 +47,15 @@ html {
 :root {
   --color-bg-dark: #111116;
   --color-bg-light: #18181f;
+  --color-foreground: #f0f0f0;
+  --color-border: #1e1e1e;
+  --color-muted: #606060;
   --background: var(--color-bg-dark);
-  --foreground: #f0f0f0;
+  --foreground: var(--color-foreground);
   --color-accent-glow: rgba(0, 212, 255, 0.15);
   --color-accent-halo: rgba(0, 212, 255, 0.4);
 }
+
 
 /* Transition fluide lors du changement de thème accent */
 a, button, span, p, h1, h2, h3, h4, svg, path {
@@ -75,5 +80,5 @@ body {
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00d4ff;
+  background: var(--color-accent);
 }

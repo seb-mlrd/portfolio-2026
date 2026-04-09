@@ -30,13 +30,13 @@ export default function ContactSection() {
         <div className="flex items-center gap-6 mb-16">
           <span className="font-mono text-xs text-accent tracking-[0.3em]">04.</span>
           <h2 className="font-mono text-2xl md:text-3xl font-bold tracking-tight">Contact</h2>
-          <div className="flex-1 h-px bg-[#1e1e1e]" />
+          <div className="flex-1 h-px bg-border" />
         </div>
 
         <div className="grid md:grid-cols-2 gap-16 items-start">
           {/* Left — tagline */}
           <div>
-            <p className="font-mono text-xl md:text-2xl leading-relaxed text-[#f0f0f0] mb-6">
+            <p className="font-mono text-xl md:text-2xl leading-relaxed text-foreground mb-6">
               Un projet en tête ?<br />
               <span className="text-accent">Discutons-en.</span>
             </p>
@@ -53,35 +53,25 @@ export default function ContactSection() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
-                <label className="font-mono text-[11px] uppercase tracking-[0.25em] text-muted">
-                  Nom
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={fields.name}
-                  onChange={handleChange}
-                  required
-                  className="bg-transparent border border-[#1e1e1e] px-4 py-3 font-mono text-sm text-[#f0f0f0] focus:outline-none focus:border-accent transition-colors duration-300 placeholder:text-[#333]"
-                  placeholder="Votre nom"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="font-mono text-[11px] uppercase tracking-[0.25em] text-muted">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={fields.email}
-                  onChange={handleChange}
-                  required
-                  className="bg-transparent border border-[#1e1e1e] px-4 py-3 font-mono text-sm text-[#f0f0f0] focus:outline-none focus:border-accent transition-colors duration-300 placeholder:text-[#333]"
-                  placeholder="votre@email.com"
-                />
-              </div>
+              {[
+                { name: 'name', label: 'Nom', type: 'text', placeholder: 'Votre nom' },
+                { name: 'email', label: 'Email', type: 'email', placeholder: 'votre@email.com' },
+              ].map((field) => (
+                <div key={field.name} className="flex flex-col gap-2">
+                  <label className="font-mono text-[11px] uppercase tracking-[0.25em] text-muted">
+                    {field.label}
+                  </label>
+                  <input
+                    type={field.type}
+                    name={field.name}
+                    value={(fields as any)[field.name]}
+                    onChange={handleChange}
+                    required
+                    placeholder={field.placeholder}
+                    className="bg-transparent border border-border px-4 py-3 font-mono text-sm text-foreground focus:outline-none focus:border-accent transition-colors duration-300 placeholder:text-muted/40"
+                  />
+                </div>
+              ))}
 
               <div className="flex flex-col gap-2">
                 <label className="font-mono text-[11px] uppercase tracking-[0.25em] text-muted">
@@ -93,8 +83,8 @@ export default function ContactSection() {
                   onChange={handleChange}
                   required
                   rows={5}
-                  className="bg-transparent border border-[#1e1e1e] px-4 py-3 font-mono text-sm text-[#f0f0f0] focus:outline-none focus:border-accent transition-colors duration-300 resize-none placeholder:text-[#333]"
                   placeholder="Décrivez votre projet..."
+                  className="bg-transparent border border-border px-4 py-3 font-mono text-sm text-foreground focus:outline-none focus:border-accent transition-colors duration-300 resize-none placeholder:text-muted/40"
                 />
               </div>
 

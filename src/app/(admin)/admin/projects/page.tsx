@@ -20,19 +20,19 @@ export default async function ProjectsPage() {
       </div>
 
       {projects.length === 0 ? (
-        <div className="border border-[#1e1e1e] p-12 text-center">
+        <div className="border border-border p-12 text-center">
           <p className="font-mono text-sm text-muted tracking-wider">Aucun projet pour l'instant.</p>
           <p className="font-mono text-xs text-muted/60 tracking-wider mt-2">
             Lancez <code className="text-accent">npx prisma db seed</code> pour insérer des données de démo.
           </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-px bg-[#1e1e1e]">
+        <div className="flex flex-col gap-px bg-border">
           {projects.map((project) => (
             <div key={project.id} className="bg-bg-dark p-6">
               <div className="flex items-start justify-between gap-4 mb-2">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className="font-mono text-sm font-bold text-[#f0f0f0]">{project.title}</span>
+                  <span className="font-mono text-sm font-bold text-foreground">{project.title}</span>
                   <span className="font-mono text-[10px] text-muted">/{project.slug}</span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -44,7 +44,7 @@ export default async function ProjectsPage() {
                   <span className={`font-mono text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 border ${
                     project.published
                       ? 'bg-green-500/10 text-green-400 border-green-500/30'
-                      : 'border-[#1e1e1e] text-muted'
+                      : 'border-border text-muted'
                   }`}>
                     {project.published ? 'Publié' : 'Brouillon'}
                   </span>
@@ -58,7 +58,7 @@ export default async function ProjectsPage() {
               {project.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
-                    <span key={tag} className="font-mono text-[10px] uppercase tracking-widest px-2 py-0.5 border border-[#1e1e1e] text-muted">
+                    <span key={tag} className="font-mono text-[10px] uppercase tracking-widest px-2 py-0.5 border border-border text-muted">
                       {tag}
                     </span>
                   ))}

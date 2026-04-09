@@ -10,7 +10,7 @@ export function MarkReadButton({ id }: { id: string }) {
     <button
       disabled={pending}
       onClick={() => startTransition(() => markMessageRead(id))}
-      className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-[#1e1e1e] text-muted hover:border-accent hover:text-accent transition-all duration-200 disabled:opacity-40"
+      className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-border text-muted hover:border-accent hover:text-accent transition-all duration-200 disabled:opacity-40"
     >
       {pending ? '...' : 'Marquer lu'}
     </button>
@@ -28,7 +28,7 @@ export function DeleteButton({ id }: { id: string }) {
           startTransition(() => deleteMessage(id))
         }
       }}
-      className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-[#1e1e1e] text-muted hover:border-red-500/60 hover:text-red-400 transition-all duration-200 disabled:opacity-40"
+      className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-border text-muted hover:border-red-500/60 hover:text-red-400 transition-all duration-200 disabled:opacity-40"
     >
       {pending ? '...' : 'Supprimer'}
     </button>

@@ -49,11 +49,11 @@ export default async function AdminDashboard() {
       {/* Divider */}
       <div className="flex items-center gap-4 mb-8">
         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">Aperçu</span>
-        <div className="flex-1 h-px bg-[#1e1e1e]" />
+        <div className="flex-1 h-px bg-border" />
       </div>
 
       {/* Stats grid */}
-      <div className="grid sm:grid-cols-2 gap-px bg-[#1e1e1e] mb-12">
+      <div className="grid sm:grid-cols-2 gap-px bg-border mb-12">
         {cards.map((card) => (
           <a
             key={card.label}
@@ -64,7 +64,7 @@ export default async function AdminDashboard() {
               {card.label}
             </p>
             <p className={`font-mono text-4xl font-bold mb-2 transition-colors duration-200 ${
-              card.alert ? 'text-accent' : 'text-[#f0f0f0] group-hover:text-accent'
+              card.alert ? 'text-accent' : 'text-foreground group-hover:text-accent'
             }`}>
               {card.value}
             </p>
@@ -80,7 +80,7 @@ export default async function AdminDashboard() {
       {/* Quick links */}
       <div className="flex items-center gap-4 mb-6">
         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">Accès rapide</span>
-        <div className="flex-1 h-px bg-[#1e1e1e]" />
+        <div className="flex-1 h-px bg-border" />
       </div>
       <div className="flex flex-wrap gap-3">
         {[
@@ -91,7 +91,7 @@ export default async function AdminDashboard() {
           <a
             key={link.label}
             href={link.href}
-            className="font-mono text-[11px] uppercase tracking-[0.2em] px-5 py-2.5 border border-[#1e1e1e] text-muted hover:border-accent hover:text-accent transition-all duration-200"
+            className="font-mono text-[11px] uppercase tracking-[0.2em] px-5 py-2.5 border border-border text-muted hover:border-accent hover:text-accent transition-all duration-200"
           >
             {link.label}
           </a>

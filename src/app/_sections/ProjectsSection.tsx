@@ -30,11 +30,11 @@ export default function ProjectsSection() {
         <div className="flex items-center gap-6 mb-16">
           <span className="font-mono text-xs text-accent tracking-[0.3em]">02.</span>
           <h2 className="font-mono text-2xl md:text-3xl font-bold tracking-tight">Projets</h2>
-          <div className="flex-1 h-px bg-[#1e1e1e]" />
+          <div className="flex-1 h-px bg-border" />
         </div>
 
         {/* Projects grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#1e1e1e]">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
           {projects.map((project) => (
             <a
               key={project.number}
@@ -58,7 +58,7 @@ export default function ProjectsSection() {
                   {project.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="font-mono text-[10px] uppercase tracking-widest px-2 py-1 border border-[#1e1e1e] text-muted group-hover:border-accent/30 transition-colors duration-300"
+                      className="font-mono text-[10px] uppercase tracking-widest px-2 py-1 border border-border text-muted group-hover:border-accent/30 transition-colors duration-300"
                     >
                       {tag}
                     </span>
