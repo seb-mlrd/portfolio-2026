@@ -8,6 +8,9 @@ export const ACCENT_COLORS = [
   { hex: '#ff0077', glow: 'rgba(255,0,119,0.15)', halo: 'rgba(255,0,119,0.4)'  },  // rose
 ]
 
+export const BG_DARK  = '#111116'
+export const BG_LIGHT = '#18181f'
+
 type ColorContextType = {
   colorIndex: number
   cycleColor: () => void
@@ -20,6 +23,11 @@ const ColorContext = createContext<ColorContextType>({
 
 export function ColorProvider({ children }: { children: React.ReactNode }) {
   const [colorIndex, setColorIndex] = useState(0)
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--color-bg-dark',  BG_DARK)
+    document.documentElement.style.setProperty('--color-bg-light', BG_LIGHT)
+  }, [])
 
   useEffect(() => {
     const { hex, glow, halo } = ACCENT_COLORS[colorIndex]

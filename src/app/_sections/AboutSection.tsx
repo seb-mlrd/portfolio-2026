@@ -26,7 +26,7 @@ export default function AboutSection() {
                 { value: '15+', label: 'Projets' },
                 { value: '100%', label: 'Impliqué' },
               ].map((stat) => (
-                <div key={stat.label} className="bg-[#080808] px-6 py-5 text-center">
+                <div key={stat.label} className="bg-bg-dark px-6 py-5 text-center">
                   <p className="font-mono text-2xl font-bold text-accent mb-1">{stat.value}</p>
                   <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted">{stat.label}</p>
                 </div>

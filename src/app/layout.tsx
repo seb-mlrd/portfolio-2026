@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
 import { ColorProvider } from '@/context/ColorContext'
 import './globals.css'
 
@@ -27,11 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[#080808] text-[#f0f0f0]">
+      <body className="min-h-full flex flex-col bg-bg-dark text-[#f0f0f0]">
         <ColorProvider>
-          <Navbar />
-          <div className="flex-1">{children}</div>
-          <Footer />
+          {children}
         </ColorProvider>
       </body>
     </html>

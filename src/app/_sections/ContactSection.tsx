@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { submitContact } from '@/lib/actions/contact'
 
 export default function ContactSection() {
   const [fields, setFields] = useState({ name: '', email: '', message: '' })
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle')
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setFields((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -13,10 +14,13 @@ export default function ContactSection() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setStatus('sending')
-    // TODO: wire up to Server Action or API route
-    await new Promise((r) => setTimeout(r, 800))
-    setStatus('sent')
-    setFields({ name: '', email: '', message: '' })
+    try {
+      await submitContact(fields)
+      setStatus('sent')
+      setFields({ name: '', email: '', message: '' })
+    } catch {
+      setStatus('error')
+    }
   }
 
   return (
@@ -94,10 +98,16 @@ export default function ContactSection() {
                 />
               </div>
 
+              {status === 'error' && (
+                <p className="font-mono text-xs text-red-400 tracking-wider">
+                  Une erreur s'est produite. Veuillez réessayer.
+                </p>
+              )}
+
               <button
                 type="submit"
                 disabled={status === 'sending'}
-                className="self-start font-mono text-xs uppercase tracking-[0.25em] px-8 py-3 border border-accent text-accent hover:bg-accent hover:text-[#080808] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                className="self-start font-mono text-xs uppercase tracking-[0.25em] px-8 py-3 border border-accent text-accent hover:bg-accent hover:text-[var(--color-bg-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
                 {status === 'sending' ? 'Envoi...' : 'Envoyer'}
               </button>

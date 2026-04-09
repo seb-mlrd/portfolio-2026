@@ -27,7 +27,7 @@ export default function SkillsSection() {
         {/* Skills grid */}
         <div className="grid md:grid-cols-3 gap-px bg-[#1e1e1e]">
           {skillGroups.map((group) => (
-            <div key={group.category} className="bg-[#080808] p-8">
+            <div key={group.category} className="bg-bg-dark p-8">
               <h3 className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent mb-8">
                 {group.category}
               </h3>

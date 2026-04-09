@@ -39,7 +39,7 @@ export default function ProjectsSection() {
             <a
               key={project.number}
               href={project.href}
-              className="group relative bg-[#080808] p-8 hover:bg-surface transition-colors duration-300 overflow-hidden"
+              className="group relative bg-bg-dark p-8 hover:bg-bg-light transition-colors duration-300 overflow-hidden"
             >
               {/* Hover glow */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"

@@ -62,7 +62,7 @@ export default function Navbar() {
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-[#080808]/90 backdrop-blur-md border-b border-[#1e1e1e]'
+          ? 'bg-bg-dark/90 backdrop-blur-md border-b border-[#1e1e1e]'
           : 'bg-transparent'
       }`}
     >
@@ -133,7 +133,7 @@ export default function Navbar() {
           isOpen ? 'max-h-72 opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <ul className="px-6 py-6 flex flex-col gap-5 border-t border-[#1e1e1e] bg-[#080808]/95 backdrop-blur-md">
+        <ul className="px-6 py-6 flex flex-col gap-5 border-t border-[#1e1e1e] bg-bg-dark/95 backdrop-blur-md">
           {links.map((link, i) => {
             const id = link.href.replace('#', '')
             const isActive = activeSection === id

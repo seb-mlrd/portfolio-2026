@@ -1,4 +1,4 @@
-import DonutAnimation from '@/components/DonutAnimation'
+import RobotAnimation from '@/components/RobotAnimation'
 
 export default function HeroSection() {
   return (
@@ -67,7 +67,7 @@ export default function HeroSection() {
           >
             <a
               href="#projets"
-              className="font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-accent text-accent hover:bg-accent hover:text-[#080808] transition-all duration-300"
+              className="font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-accent text-accent hover:bg-accent hover:text-[var(--color-bg-dark)] transition-all duration-300"
             >
               Voir les projets
             </a>
@@ -88,7 +88,7 @@ export default function HeroSection() {
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted text-center mb-3">
             Cliquer pour changer de couleur
           </p>
-          <DonutAnimation size={440} />
+          <RobotAnimation size={440} />
         </div>
       </div>
 

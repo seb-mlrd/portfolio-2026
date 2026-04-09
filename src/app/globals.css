@@ -3,7 +3,9 @@
 @theme {
   --color-accent: #00d4ff;
   --color-accent-dim: rgba(0, 212, 255, 0.08);
-  --color-surface: #0f0f0f;
+  --color-bg-dark: #111116;
+  --color-bg-light: #18181f;
+  --color-surface: #18181f;
   --color-border: #1e1e1e;
   --color-muted: #606060;
 
@@ -42,7 +44,9 @@ html {
 }
 
 :root {
-  --background: #080808;
+  --color-bg-dark: #111116;
+  --color-bg-light: #18181f;
+  --background: var(--color-bg-dark);
   --foreground: #f0f0f0;
   --color-accent-glow: rgba(0, 212, 255, 0.15);
   --color-accent-halo: rgba(0, 212, 255, 0.4);

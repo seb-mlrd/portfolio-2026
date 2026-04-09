@@ -9,7 +9,7 @@ const COLORS: [number, number, number][] = ACCENT_COLORS.map(({ hex }) => [
   parseInt(hex.slice(5, 7), 16),
 ])
 
-export default function DonutAnimation({ size = 440 }: { size?: number }) {
+export default function RobotAnimation({ size = 440 }: { size?: number }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const { colorIndex, cycleColor } = useAccentColor()
   const colorIndexRef = useRef(colorIndex)
@@ -186,7 +186,7 @@ export default function DonutAnimation({ size = 440 }: { size?: number }) {
           buffer.loadPixels()
 
           const currentColor = COLORS[colorIndexRef.current]
-          p.background(8, 8, 8)
+          p.clear()
           p.noStroke()
 
           for (let y = 0; y < size; y += pas) {
