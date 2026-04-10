@@ -35,7 +35,7 @@ export default async function AdminDashboard() {
   ]
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-8">
       {/* Header */}
       <div className="mb-10">
         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted mb-1">

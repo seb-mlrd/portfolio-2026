@@ -1,28 +1,12 @@
-const projects = [
-  {
-    number: '01',
-    title: 'Projet Alpha',
-    description: 'Application web full stack avec Next.js, Prisma et PostgreSQL.',
-    tags: ['Next.js', 'TypeScript', 'Prisma'],
-    href: '#',
-  },
-  {
-    number: '02',
-    title: 'Projet Beta',
-    description: 'Interface responsive avec animations et design system personnalisé.',
-    tags: ['React', 'Tailwind', 'Framer Motion'],
-    href: '#',
-  },
-  {
-    number: '03',
-    title: 'Projet Gamma',
-    description: 'API REST sécurisée avec authentification et gestion des rôles.',
-    tags: ['Node.js', 'PostgreSQL', 'JWT'],
-    href: '#',
-  },
-]
+import Link from 'next/link'
+import { prisma } from '@/lib/prisma'
 
-export default function ProjectsSection() {
+export default async function ProjectsSection() {
+  const projects = await prisma.project.findMany({
+    where: { published: true },
+    orderBy: { order: 'asc' },
+  })
+
   return (
     <section id="projets" className="py-32 px-6">
       <div className="max-w-6xl mx-auto">
@@ -33,46 +17,52 @@ export default function ProjectsSection() {
           <div className="flex-1 h-px bg-border" />
         </div>
 
-        {/* Projects grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
-          {projects.map((project) => (
-            <a
-              key={project.number}
-              href={project.href}
-              className="group relative bg-bg-dark p-8 hover:bg-bg-light transition-colors duration-300 overflow-hidden"
-            >
-              {/* Hover glow */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ background: 'radial-gradient(ellipse 80% 80% at 50% 0%, rgba(0,212,255,0.04) 0%, transparent 70%)' }}
-              />
+        {projects.length === 0 ? (
+          <p className="font-mono text-sm text-muted tracking-wider">Aucun projet publié pour l'instant.</p>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {projects.map((project, i) => (
+              <Link
+                key={project.id}
+                href={`/projets/${project.slug}`}
+                className="group relative border border-border bg-bg-light p-8 hover:border-accent/40 transition-all duration-300 overflow-hidden"
+              >
+                {/* Hover glow */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ background: 'radial-gradient(ellipse 80% 80% at 50% 0%, var(--color-accent-glow) 0%, transparent 70%)' }}
+                />
 
-              <div className="relative z-10">
-                <span className="font-mono text-[11px] text-accent tracking-widest">{project.number}</span>
-                <h3 className="font-mono text-lg font-bold mt-3 mb-3 group-hover:text-accent transition-colors duration-300">
-                  {project.title}
-                </h3>
-                <p className="text-sm text-muted leading-relaxed mb-6">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="font-mono text-[10px] uppercase tracking-widest px-2 py-1 border border-border text-muted group-hover:border-accent/30 transition-colors duration-300"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                <div className="relative z-10">
+                  <span className="font-mono text-[11px] text-accent tracking-widest">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="font-mono text-lg font-bold mt-3 mb-3 group-hover:text-accent transition-colors duration-300">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-muted leading-relaxed mb-6">
+                    {project.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="font-mono text-[10px] uppercase tracking-widest px-2 py-1 border border-border text-muted group-hover:border-accent/30 transition-colors duration-300"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Arrow */}
-              <span className="absolute top-8 right-8 text-muted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300 font-mono text-sm">
-                ↗
-              </span>
-            </a>
-          ))}
-        </div>
+                {/* Arrow */}
+                <span className="absolute top-8 right-8 text-muted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300 font-mono text-sm">
+                  ↗
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

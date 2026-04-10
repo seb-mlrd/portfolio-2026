@@ -11,7 +11,7 @@ export default async function MessagesPage() {
   const unread = messages.filter((m) => !m.read).length
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-8">
       {/* Header */}
       <div className="flex items-center gap-4 mb-10">
         <div>
