@@ -8,6 +8,12 @@ export const ACCENT_COLORS = [
   { hex: '#ff0077', glow: 'rgba(255,0,119,0.15)', halo: 'rgba(255,0,119,0.4)'  },  // rose
 ]
 
+export const ACCENT_COLORS_LIGHT = [
+  { hex: '#0077A8', glow: 'rgba(0,119,168,0.12)', halo: 'rgba(0,119,168,0.28)' },  // bleu-cyan foncé
+  { hex: '#007A5C', glow: 'rgba(0,122,92,0.12)',  halo: 'rgba(0,122,92,0.28)'  },  // vert émeraude
+  { hex: '#C4005A', glow: 'rgba(196,0,90,0.12)',  halo: 'rgba(196,0,90,0.28)'  },  // framboise
+]
+
 const THEMES = {
   dark: {
     '--color-bg-dark':   '#111116',
@@ -19,12 +25,12 @@ const THEMES = {
     '--foreground':      '#f0f0f0',
   },
   light: {
-    '--color-bg-dark':   '#f4f0e6',
-    '--color-bg-light':  '#ece6d8',
+    '--color-bg-dark':   '#D9D5C8',
+    '--color-bg-light':  '#E4E0D4',
     '--color-foreground':'#111116',
-    '--color-border':    '#cec8b8',
-    '--color-muted':     '#888880',
-    '--background':      '#f4f0e6',
+    '--color-border':    '#B8B4A8',
+    '--color-muted':     '#6E6B62',
+    '--background':      '#D9D5C8',
     '--foreground':      '#111116',
   },
 }
@@ -55,11 +61,12 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
   }, [theme])
 
   useEffect(() => {
-    const { hex, glow, halo } = ACCENT_COLORS[colorIndex]
+    const palette = theme === 'light' ? ACCENT_COLORS_LIGHT : ACCENT_COLORS
+    const { hex, glow, halo } = palette[colorIndex]
     document.documentElement.style.setProperty('--color-accent', hex)
     document.documentElement.style.setProperty('--color-accent-glow', glow)
     document.documentElement.style.setProperty('--color-accent-halo', halo)
-  }, [colorIndex])
+  }, [colorIndex, theme])
 
   function cycleColor() {
     setColorIndex((i) => (i + 1) % ACCENT_COLORS.length)

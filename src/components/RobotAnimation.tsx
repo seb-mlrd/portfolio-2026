@@ -1,22 +1,24 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { useAccentColor, ACCENT_COLORS } from '@/context/ColorContext'
+import { useAccentColor, ACCENT_COLORS, ACCENT_COLORS_LIGHT } from '@/context/ColorContext'
 
-const COLORS: [number, number, number][] = ACCENT_COLORS.map(({ hex }) => [
-  parseInt(hex.slice(1, 3), 16),
-  parseInt(hex.slice(3, 5), 16),
-  parseInt(hex.slice(5, 7), 16),
-])
+function toRGB(hex: string): [number, number, number] {
+  return [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)]
+}
+const COLORS_DARK:  [number, number, number][] = ACCENT_COLORS.map(({ hex }) => toRGB(hex))
+const COLORS_LIGHT: [number, number, number][] = ACCENT_COLORS_LIGHT.map(({ hex }) => toRGB(hex))
 
 export default function RobotAnimation({ size = 440 }: { size?: number }) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const { colorIndex, cycleColor } = useAccentColor()
+  const { colorIndex, cycleColor, theme } = useAccentColor()
   const colorIndexRef = useRef(colorIndex)
   const cycleColorRef = useRef(cycleColor)
+  const themeRef = useRef(theme)
 
   useEffect(() => { colorIndexRef.current = colorIndex }, [colorIndex])
   useEffect(() => { cycleColorRef.current = cycleColor }, [cycleColor])
+  useEffect(() => { themeRef.current = theme }, [theme])
 
   useEffect(() => {
     const container = containerRef.current
@@ -185,7 +187,8 @@ export default function RobotAnimation({ size = 440 }: { size?: number }) {
 
           buffer.loadPixels()
 
-          const currentColor = COLORS[colorIndexRef.current]
+          const palette = themeRef.current === 'light' ? COLORS_LIGHT : COLORS_DARK
+          const currentColor = palette[colorIndexRef.current]
           p.clear()
           p.noStroke()
 
