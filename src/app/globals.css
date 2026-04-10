@@ -8,7 +8,7 @@
   --color-surface: #18181f;
   --color-foreground: #f0f0f0;
   --color-border: #1e1e1e;
-  --color-muted: #606060;
+  --color-muted: #888888;
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -44,12 +44,26 @@ html {
   scroll-padding-top: 4rem;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 :root {
   --color-bg-dark: #111116;
   --color-bg-light: #18181f;
   --color-foreground: #f0f0f0;
   --color-border: #1e1e1e;
-  --color-muted: #606060;
+  --color-muted: #888888;
   --background: var(--color-bg-dark);
   --foreground: var(--color-foreground);
   --color-accent-glow: rgba(0, 212, 255, 0.15);
@@ -58,8 +72,10 @@ html {
 
 
 /* Transition fluide lors du changement de thème accent */
-a, button, span, p, h1, h2, h3, h4, svg, path {
-  transition: color 0.4s ease, border-color 0.4s ease, background-color 0.4s ease, text-shadow 0.4s ease;
+@media (prefers-reduced-motion: no-preference) {
+  a, button, span, p, h1, h2, h3, h4, svg, path {
+    transition: color 0.4s ease, border-color 0.4s ease, background-color 0.4s ease, text-shadow 0.4s ease;
+  }
 }
 
 body {

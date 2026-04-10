@@ -24,7 +24,7 @@ function ThemeSwitch() {
     <button
       onClick={toggleTheme}
       aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
-      className="relative flex items-center gap-2 group"
+      className="cursor-pointer relative flex items-center gap-2 group"
     >
       {/* Sun icon */}
       <svg
@@ -148,7 +148,7 @@ export default function Navbar() {
           <ThemeSwitch />
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex flex-col justify-center items-center w-8 h-8 gap-[5px] text-foreground"
+            className="cursor-pointer flex flex-col justify-center items-center w-11 h-11 gap-[5px] text-foreground"
             aria-label={isOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
           >
             <span className={`block h-px bg-current transition-all duration-300 origin-center ${isOpen ? 'w-6 rotate-45 translate-y-[7px]' : 'w-6'}`} />

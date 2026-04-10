@@ -4,7 +4,7 @@ export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center px-6 overflow-hidden"
+      className="relative min-h-dvh flex items-center px-6 overflow-hidden"
     >
       {/* Background grid */}
       <div
@@ -67,13 +67,13 @@ export default function HeroSection() {
           >
             <a
               href="#projets"
-              className="font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-accent text-accent hover:bg-accent hover:text-[var(--color-bg-dark)] transition-all duration-300"
+              className="cursor-pointer font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-accent text-accent hover:bg-accent hover:text-[var(--color-bg-dark)] transition-all duration-300"
             >
               Voir les projets
             </a>
             <a
               href="#contact"
-              className="font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-border text-muted hover:border-accent hover:text-accent transition-all duration-300"
+              className="cursor-pointer font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-border text-muted hover:border-accent hover:text-accent transition-all duration-300"
             >
               Contact
             </a>

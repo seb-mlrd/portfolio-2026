@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { ColorProvider } from '@/context/ColorContext'
+import LenisProvider from '@/components/LenisProvider'
 import './globals.css'
 
 const geistSans = Geist({
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang="fr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-bg-dark text-foreground">
         <ColorProvider>
-          {children}
+          <LenisProvider>
+            {children}
+          </LenisProvider>
         </ColorProvider>
       </body>
     </html>
