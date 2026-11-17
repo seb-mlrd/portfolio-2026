@@ -2,9 +2,16 @@
 
 import { useTransition, useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { deleteProject } from '@/lib/actions/projects'
 
-export function ProjectActionsDropdown({ id }: { id: string }) {
+export default function ItemActions({
+  editHref,
+  onDelete,
+  confirmMessage = 'Supprimer cet élément ?',
+}: {
+  editHref: string
+  onDelete: () => Promise<void>
+  confirmMessage?: string
+}) {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const ref = useRef<HTMLDivElement>(null)
@@ -31,7 +38,7 @@ export function ProjectActionsDropdown({ id }: { id: string }) {
       {open && (
         <div className="absolute right-0 top-full mt-1 z-50 border border-border bg-bg-dark min-w-[130px] flex flex-col">
           <Link
-            href={`/admin/projects/${id}/edit`}
+            href={editHref}
             onClick={() => setOpen(false)}
             className="font-mono text-[10px] uppercase tracking-[0.2em] px-4 py-2.5 text-muted hover:text-accent hover:bg-bg-light transition-all duration-150"
           >
@@ -40,8 +47,8 @@ export function ProjectActionsDropdown({ id }: { id: string }) {
           <button
             disabled={pending}
             onClick={() => {
-              if (confirm('Supprimer ce projet ?')) {
-                startTransition(() => deleteProject(id))
+              if (confirm(confirmMessage)) {
+                startTransition(() => onDelete())
               }
               setOpen(false)
             }}

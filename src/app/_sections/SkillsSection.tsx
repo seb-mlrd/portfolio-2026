@@ -1,47 +1,35 @@
-const skillGroups = [
-  {
-    category: 'Frontend',
-    skills: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'HTML / CSS'],
-  },
-  {
-    category: 'Backend',
-    skills: ['Node.js', 'Prisma', 'REST API', 'PostgreSQL', 'NextAuth'],
-  },
-  {
-    category: 'Outils',
-    skills: ['Git', 'Docker', 'VS Code', 'Figma', 'Linux'],
-  },
-]
+import { prisma } from '@/lib/prisma'
+import SectionHeader from './SectionHeader'
 
-export default function SkillsSection() {
+export default async function SkillsSection() {
+  const skills = await prisma.skill.findMany({
+    where: { published: true },
+    orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+  })
+
+  if (skills.length === 0) return null
+
   return (
     <section id="competences" className="py-32 px-6">
       <div className="max-w-6xl mx-auto">
-        {/* Section header */}
-        <div className="flex items-center gap-6 mb-16">
-          <span className="font-mono text-xs text-accent tracking-[0.3em]">03.</span>
-          <h2 className="font-mono text-2xl md:text-3xl font-bold tracking-tight">Compétences</h2>
-          <div className="flex-1 h-px bg-border" />
-        </div>
+        <SectionHeader index="05" title="Compétences" />
 
-        {/* Skills grid */}
-        <div className="grid md:grid-cols-3 gap-px bg-border">
-          {skillGroups.map((group) => (
-            <div key={group.category} className="bg-bg-dark p-8">
-              <h3 className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent mb-8">
-                {group.category}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border border border-border">
+          {skills.map((skill, i) => (
+            <article key={skill.id} className="group bg-bg-dark p-8 flex flex-col gap-4">
+              <span className="font-mono text-[11px] text-accent tracking-widest">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 className="font-mono text-base font-bold leading-snug group-hover:text-accent transition-colors duration-300">
+                {skill.title}
               </h3>
-              <ul className="flex flex-col gap-4">
-                {group.skills.map((skill) => (
-                  <li key={skill} className="flex items-center gap-3 group">
-                    <span className="w-1.5 h-1.5 bg-accent/40 group-hover:bg-accent transition-colors duration-300 shrink-0" />
-                    <span className="font-mono text-sm text-muted group-hover:text-foreground transition-colors duration-300">
-                      {skill}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <p className="text-sm leading-relaxed text-muted whitespace-pre-line">{skill.description}</p>
+              {skill.keywords.length > 0 && (
+                <p className="font-mono text-[11px] text-muted/80 tracking-wider mt-auto pt-2">
+                  {skill.keywords.join(' · ')}
+                </p>
+              )}
+            </article>
           ))}
         </div>
       </div>

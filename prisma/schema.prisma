@@ -75,15 +75,46 @@ model Project {
   updatedAt   DateTime @updatedAt
 }
 
+model Education {
+  id          String   @id @default(cuid())
+  degree      String
+  school      String
+  location    String?
+  startYear   Int
+  endYear     Int?
+  description String?  @db.Text
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Experience {
+  id           String    @id @default(cuid())
+  role         String
+  company      String
+  location     String?
+  contractType String?
+  startDate    DateTime
+  endDate      DateTime?
+  description  String    @db.Text
+  stack        String[]
+  order        Int       @default(0)
+  published    Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// Compétence métier (titre + paragraphe), les technos sont gérées ailleurs
 model Skill {
-  id        String   @id @default(cuid())
-  name      String
-  category  String
-  level     Int      @default(0)
-  icon      String?
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  keywords    String[]
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model ContactMessage {

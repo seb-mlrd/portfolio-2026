@@ -3,7 +3,7 @@
 import { useTransition, useState } from 'react'
 import { updateProject } from '@/lib/actions/projects'
 import type { Project } from '@prisma/client'
-import TagInput from './TagInput'
+import TagInput from '../../_components/TagInput'
 
 export default function EditProjectForm({ project }: { project: Project }) {
   const [pending, startTransition] = useTransition()

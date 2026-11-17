@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
-import { ProjectActionsDropdown } from './_components/ProjectActions'
+import { deleteProject } from '@/lib/actions/projects'
+import ItemActions from '../_components/ItemActions'
 
 export const metadata = { title: 'Projets — Admin' }
 
@@ -79,7 +80,11 @@ export default async function ProjectsPage() {
 
               {/* Actions */}
               <div className="flex items-center">
-                <ProjectActionsDropdown id={project.id} />
+                <ItemActions
+                  editHref={`/admin/projects/${project.id}/edit`}
+                  onDelete={deleteProject.bind(null, project.id)}
+                  confirmMessage="Supprimer ce projet ?"
+                />
               </div>
             </div>
           ))}

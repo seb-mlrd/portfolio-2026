@@ -2,7 +2,15 @@
 
 import { useState } from 'react'
 
-export default function TagInput({ initialTags = [] }: { initialTags?: string[] }) {
+export default function TagInput({
+  initialTags = [],
+  name = 'tags',
+  placeholder = 'Ex: Next.js',
+}: {
+  initialTags?: string[]
+  name?: string
+  placeholder?: string
+}) {
   const [tags, setTags] = useState<string[]>(initialTags)
   const [input, setInput] = useState('')
 
@@ -33,7 +41,7 @@ export default function TagInput({ initialTags = [] }: { initialTags?: string[] 
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ex: Next.js"
+          placeholder={placeholder}
           className="flex-1 bg-transparent border border-border px-4 py-2.5 font-mono text-sm text-foreground placeholder:text-muted/40 focus:outline-none focus:border-accent transition-colors duration-200"
         />
         <button
@@ -70,7 +78,7 @@ export default function TagInput({ initialTags = [] }: { initialTags?: string[] 
 
       {/* Hidden inputs pour le FormData */}
       {tags.map((tag) => (
-        <input key={tag} type="hidden" name="tags" value={tag} />
+        <input key={tag} type="hidden" name={name} value={tag} />
       ))}
     </div>
   )
