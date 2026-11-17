@@ -5,7 +5,9 @@ import { useAccentColor } from '@/context/ColorContext'
 
 const links = [
   { label: 'Présentation', href: '#presentation' },
+  { label: 'Expériences', href: '#experiences' },
   { label: 'Projets', href: '#projets' },
+  { label: 'Formation', href: '#formation' },
   { label: 'Compétences', href: '#competences' },
   { label: 'Contact', href: '#contact' },
 ]

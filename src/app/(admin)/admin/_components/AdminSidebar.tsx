@@ -8,6 +8,9 @@ const nav = [
   { href: '/admin',          label: 'Dashboard', icon: '◈' },
   { href: '/admin/messages', label: 'Messages',  icon: '◉' },
   { href: '/admin/projects', label: 'Projets',   icon: '◧' },
+  { href: '/admin/experiences', label: 'Expériences', icon: '◨' },
+  { href: '/admin/educations',  label: 'Formation',   icon: '◩' },
+  { href: '/admin/skills',      label: 'Compétences', icon: '◪' },
 ]
 
 export default function AdminSidebar() {

@@ -12,7 +12,7 @@ export default async function ProjectsSection() {
       <div className="max-w-6xl mx-auto">
         {/* Section header */}
         <div className="flex items-center gap-6 mb-16">
-          <span className="font-mono text-xs text-accent tracking-[0.3em]">02.</span>
+          <span className="font-mono text-xs text-accent tracking-[0.3em]">03.</span>
           <h2 className="font-mono text-2xl md:text-3xl font-bold tracking-tight">Projets</h2>
           <div className="flex-1 h-px bg-border" />
         </div>

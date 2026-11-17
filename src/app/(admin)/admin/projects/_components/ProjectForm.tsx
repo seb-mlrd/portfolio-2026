@@ -2,7 +2,7 @@
 
 import { useTransition, useState } from 'react'
 import { createProject } from '@/lib/actions/projects'
-import TagInput from './TagInput'
+import TagInput from '../../_components/TagInput'
 
 function slugify(title: string): string {
   return title
