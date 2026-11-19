@@ -46,3 +46,6 @@ next-env.d.ts
 
 # hallmark
 .hallmark
+
+# claude
+.claude
