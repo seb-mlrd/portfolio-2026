@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useAccentColor } from '@/context/ColorContext'
 
 const links = [
@@ -12,11 +13,6 @@ const links = [
   { label: 'Contact', href: '#contact' },
 ]
 
-function scrollToSection(href: string) {
-  const id = href.replace('#', '')
-  const el = document.getElementById(id)
-  if (el) el.scrollIntoView({ behavior: 'smooth' })
-}
 
 function ThemeSwitch() {
   const { theme, toggleTheme } = useAccentColor()
@@ -24,9 +20,12 @@ function ThemeSwitch() {
 
   return (
     <button
+      type="button"
+      role="switch"
+      aria-checked={!isDark}
+      aria-label="Thème clair"
       onClick={toggleTheme}
-      aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
-      className="cursor-pointer relative flex items-center gap-2 group"
+      className="cursor-pointer relative flex items-center gap-2 group py-3 transition-transform duration-100 ease-out active:scale-95"
     >
       {/* Sun icon */}
       <svg
@@ -93,10 +92,16 @@ export default function Navbar() {
     return () => observers.forEach((o) => o.disconnect())
   }, [])
 
+  // Sur la home : scroll fluide vers la section. Ailleurs (ex. /projets/[slug]) :
+  // on laisse le lien naviguer vers /#section.
   function handleLinkClick(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
-    e.preventDefault()
     setIsOpen(false)
-    scrollToSection(href)
+    const el = document.getElementById(href.slice(1))
+    if (!el) return
+    e.preventDefault()
+    // Pas de behavior forcé : suit `scroll-behavior` du CSS, donc instantané en mouvement réduit
+    el.scrollIntoView()
+    history.replaceState(null, '', href)
   }
 
   return (
@@ -109,14 +114,14 @@ export default function Navbar() {
     >
       <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <a
-          href="#hero"
+        <Link
+          href="/#hero"
           onClick={(e) => handleLinkClick(e, '#hero')}
           className="font-mono text-lg font-bold tracking-[0.3em] text-accent transition-all duration-300 hover:tracking-[0.5em]"
           style={{ textShadow: '0 0 20px var(--color-accent-halo)' }}
         >
           S.M<span className="animate-[blink_1.1s_step-end_infinite]">_</span>
-        </a>
+        </Link>
 
         {/* Desktop links + theme switch */}
         <div className="hidden md:flex items-center gap-10">
@@ -126,10 +131,10 @@ export default function Navbar() {
               const isActive = activeSection === id
               return (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
+                  <Link
+                    href={`/${link.href}`}
                     onClick={(e) => handleLinkClick(e, link.href)}
-                    className={`group relative font-mono text-[11px] uppercase tracking-[0.25em] transition-colors duration-300 ${
+                    className={`group relative font-mono text-[11px] uppercase tracking-[0.25em] transition-colors duration-150 active:opacity-60 ${
                       isActive ? 'text-accent' : 'text-muted hover:text-accent'
                     }`}
                   >
@@ -137,7 +142,7 @@ export default function Navbar() {
                     <span className={`absolute -bottom-0.5 left-0 h-px bg-accent transition-all duration-300 ${
                       isActive ? 'w-full' : 'w-0 group-hover:w-full'
                     }`} />
-                  </a>
+                  </Link>
                 </li>
               )
             })}
@@ -172,8 +177,8 @@ export default function Navbar() {
                 style={{ transitionDelay: isOpen ? `${i * 60}ms` : '0ms' }}
                 className={`transition-all duration-300 ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
               >
-                <a
-                  href={link.href}
+                <Link
+                  href={`/${link.href}`}
                   onClick={(e) => handleLinkClick(e, link.href)}
                   className={`font-mono text-sm uppercase tracking-[0.25em] transition-colors duration-200 block ${
                     isActive ? 'text-accent' : 'text-muted hover:text-accent'
@@ -181,7 +186,7 @@ export default function Navbar() {
                 >
                   <span className="text-accent mr-3 text-xs">0{i + 1}.</span>
                   {link.label}
-                </a>
+                </Link>
               </li>
             )
           })}

@@ -15,7 +15,7 @@ export function formatYears(start: number, end: number | null): string {
   return `${start} — ${end ?? 'En cours'}`
 }
 
-/** Date → "YYYY-MM" pour un <input type="month"> */
-export function toMonthInput(date: Date | null | undefined): string {
-  return date ? date.toISOString().slice(0, 7) : ''
+/** Date → "YYYY-MM-DD" pour un <input type="date"> */
+export function toDateInput(date: Date | null | undefined): string {
+  return date ? date.toISOString().slice(0, 10) : ''
 }

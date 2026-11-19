@@ -29,11 +29,23 @@ export function optInt(formData: FormData, key: string): number | null {
   return Number.isNaN(n) ? null : n
 }
 
-/** Mois au format "YYYY-MM" (input type="month") → Date, vide → null */
-export function optMonth(formData: FormData, key: string): Date | null {
+/** "YYYY-MM-DD" (input type="date") → Date UTC à minuit */
+export function optDate(formData: FormData, key: string): Date | null {
   const value = String(formData.get(key) ?? '').trim()
-  if (!/^\d{4}-\d{2}$/.test(value)) return null
-  return new Date(`${value}-01T00:00:00.000Z`)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null
+  const date = new Date(`${value}T00:00:00.000Z`)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+/** URL facultative : vide → null, refuse tout autre protocole que http(s) (évite les liens javascript:) */
+export function optUrl(formData: FormData, key: string): string | null {
+  const value = optStr(formData, key)
+  if (!value) return null
+  try {
+    const url = new URL(value)
+    if (url.protocol === 'http:' || url.protocol === 'https:') return url.toString()
+  } catch {}
+  throw new Error(`Champ "${key}" : URL invalide (http:// ou https://)`)
 }
 
 export function list(formData: FormData, key: string): string[] {

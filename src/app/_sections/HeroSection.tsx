@@ -43,12 +43,11 @@ export default function HeroSection() {
               letterSpacing: '-0.02em',
               color: 'var(--color-foreground)',
               textShadow: '0 0 40px var(--color-accent-glow)',
-              animationName: 'fade-up, glow-pulse',
-              animationDuration: '0.6s, 3s',
-              animationDelay: '0.25s, 1.5s',
+              animationName: 'fade-up, glow-in',
+              animationDuration: '0.6s, 2.4s',
+              animationDelay: '0.25s, 0.6s',
               animationTimingFunction: 'ease, ease-in-out',
-              animationFillMode: 'both, forwards',
-              animationIterationCount: '1, infinite',
+              animationFillMode: 'both, both',
             }}
           >
             S.M
@@ -67,13 +66,13 @@ export default function HeroSection() {
           >
             <a
               href="#projets"
-              className="cursor-pointer font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-accent text-accent hover:bg-accent hover:text-[var(--color-bg-dark)] transition-all duration-300"
+              className="cursor-pointer font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-accent text-accent hover:bg-accent hover:text-[var(--color-bg-dark)] transition-all duration-150 active:scale-[0.97] active:duration-75"
             >
               Voir les projets
             </a>
             <a
               href="#contact"
-              className="cursor-pointer font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-border text-muted hover:border-accent hover:text-accent transition-all duration-300"
+              className="cursor-pointer font-mono text-xs uppercase tracking-[0.25em] px-7 py-3 border border-border text-muted hover:border-accent hover:text-accent transition-all duration-150 active:scale-[0.97] active:duration-75"
             >
               Contact
             </a>
@@ -82,13 +81,13 @@ export default function HeroSection() {
 
         {/* Right — donut */}
         <div
-          className="shrink-0"
+          className="w-full max-w-[440px] min-w-0"
           style={{ animationName: 'fade-up', animationDuration: '0.8s', animationDelay: '0.2s', animationFillMode: 'both' }}
         >
-          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted text-center mb-3">
+          <p aria-hidden="true" className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted text-center mb-3">
             Cliquer pour changer de couleur
           </p>
-          <RobotAnimation size={440} />
+          <RobotAnimation maxSize={440} />
         </div>
       </div>
 

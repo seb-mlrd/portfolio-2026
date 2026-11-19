@@ -1,9 +1,9 @@
 'use client'
 
-import { useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import type { Experience } from '@prisma/client'
 import { saveExperience } from '@/lib/actions/experiences'
-import { toMonthInput } from '@/lib/format'
+import { toDateInput } from '@/lib/format'
 import TagInput from '../../_components/TagInput'
 import { Field, TextInput, TextArea, PublishedToggle, SubmitButton } from '../../_components/FormFields'
 
@@ -11,6 +11,7 @@ const CONTRACT_TYPES = ['CDI', 'CDD', 'Alternance', 'Stage', 'Freelance']
 
 export default function ExperienceForm({ initial }: { initial?: Experience }) {
   const [pending, startTransition] = useTransition()
+  const [startDate, setStartDate] = useState(toDateInput(initial?.startDate))
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -44,10 +45,10 @@ export default function ExperienceForm({ initial }: { initial?: Experience }) {
       </div>
       <div className="grid md:grid-cols-2 gap-6">
         <Field label="Début">
-          <TextInput name="startDate" type="month" required defaultValue={toMonthInput(initial?.startDate)} />
+          <TextInput name="startDate" type="date" required value={startDate} onChange={(e) => setStartDate(e.target.value)} />
         </Field>
         <Field label="Fin" hint="Vide = poste actuel">
-          <TextInput name="endDate" type="month" defaultValue={toMonthInput(initial?.endDate)} />
+          <TextInput name="endDate" type="date" min={startDate || undefined} defaultValue={toDateInput(initial?.endDate)} />
         </Field>
       </div>
       <Field label="Description">

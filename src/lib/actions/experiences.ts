@@ -3,18 +3,20 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { requireAdmin, str, optStr, optInt, optMonth, list, bool } from './_utils'
+import { requireAdmin, str, optStr, optInt, optDate, list, bool } from './_utils'
 
 function parse(formData: FormData) {
-  const startDate = optMonth(formData, 'startDate')
+  const startDate = optDate(formData, 'startDate')
   if (!startDate) throw new Error('Date de début requise')
+  const endDate = optDate(formData, 'endDate')
+  if (endDate && endDate < startDate) throw new Error('La date de fin doit être après la date de début')
   return {
     role: str(formData, 'role'),
     company: str(formData, 'company'),
     location: optStr(formData, 'location'),
     contractType: optStr(formData, 'contractType'),
     startDate,
-    endDate: optMonth(formData, 'endDate'),
+    endDate,
     description: str(formData, 'description'),
     stack: list(formData, 'stack'),
     order: optInt(formData, 'order') ?? 0,

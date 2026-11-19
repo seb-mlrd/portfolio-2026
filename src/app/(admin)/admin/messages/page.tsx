@@ -62,6 +62,12 @@ export default async function MessagesPage() {
               </p>
 
               <div className="flex items-center gap-2">
+                <a
+                  href={`mailto:${msg.email}?subject=${encodeURIComponent(`Re: ${msg.subject || 'Votre message'}`)}`}
+                  className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-border text-muted hover:border-accent hover:text-accent transition-all duration-200"
+                >
+                  Répondre
+                </a>
                 {!msg.read && <MarkReadButton id={msg.id} />}
                 <DeleteButton id={msg.id} />
               </div>

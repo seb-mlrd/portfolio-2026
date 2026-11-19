@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { optUrl } from './_utils'
 
 function generateSlug(title: string): string {
   return title
@@ -25,12 +26,14 @@ export async function createProject(formData: FormData) {
   const description = (formData.get('description') as string).trim()
   const tags = formData.getAll('tags') as string[]
   const published = formData.get('published') === 'true'
+  const githubUrl = optUrl(formData, 'githubUrl')
+  const liveUrl = optUrl(formData, 'liveUrl')
 
   let slug = generateSlug(title)
   const existing = await prisma.project.findUnique({ where: { slug } })
   if (existing) slug = `${slug}-${Date.now()}`
 
-  await prisma.project.create({ data: { title, slug, description, tags, published } })
+  await prisma.project.create({ data: { title, slug, description, tags, published, githubUrl, liveUrl } })
 
   revalidatePath('/admin/projects')
   redirect('/admin/projects')
@@ -44,8 +47,10 @@ export async function updateProject(id: string, formData: FormData) {
   const description = (formData.get('description') as string).trim()
   const tags = formData.getAll('tags') as string[]
   const published = formData.get('published') === 'true'
+  const githubUrl = optUrl(formData, 'githubUrl')
+  const liveUrl = optUrl(formData, 'liveUrl')
 
-  await prisma.project.update({ where: { id }, data: { title, description, tags, published } })
+  await prisma.project.update({ where: { id }, data: { title, description, tags, published, githubUrl, liveUrl } })
 
   revalidatePath('/admin/projects')
   revalidatePath('/', 'layout')

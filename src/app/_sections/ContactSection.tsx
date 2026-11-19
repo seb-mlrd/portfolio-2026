@@ -27,15 +27,15 @@ export default function ContactSection() {
     <section id="contact" className="py-32 px-6">
       <div className="max-w-6xl mx-auto">
         {/* Section header */}
-        <div className="flex items-center gap-6 mb-16">
-          <span className="font-mono text-xs text-accent tracking-[0.3em]">07.</span>
+        <div data-reveal className="flex items-center gap-6 mb-16">
+          <span className="font-mono text-xs text-accent tracking-[0.3em]">06.</span>
           <h2 className="font-mono text-2xl md:text-3xl font-bold tracking-tight">Contact</h2>
           <div className="flex-1 h-px bg-border" />
         </div>
 
         <div className="grid md:grid-cols-2 gap-16 items-start">
           {/* Left — tagline */}
-          <div>
+          <div data-reveal="left">
             <p className="font-mono text-xl md:text-2xl leading-relaxed text-foreground mb-6">
               Un projet en tête ?<br />
               <span className="text-accent">Discutons-en.</span>
@@ -46,7 +46,7 @@ export default function ContactSection() {
           </div>
 
           {/* Right — form */}
-          <div aria-live="polite" aria-atomic="true">
+          <div data-reveal style={{ '--reveal-delay': '150ms' } as React.CSSProperties} aria-live="polite" aria-atomic="true">
             {status === 'sent' ? (
               <div className="flex flex-col items-start gap-4 py-8">
                 <span className="font-mono text-4xl text-accent" aria-hidden="true">✓</span>
@@ -70,7 +70,7 @@ export default function ContactSection() {
                       onChange={handleChange}
                       required
                       placeholder={field.placeholder}
-                      className="bg-transparent border border-border px-4 py-3 font-mono text-sm text-foreground focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors duration-300 placeholder:text-muted/40"
+                      className="bg-transparent border border-border px-4 py-3 font-mono text-sm text-foreground focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors duration-300 placeholder:text-muted"
                     />
                   </div>
                 ))}
@@ -87,7 +87,7 @@ export default function ContactSection() {
                     required
                     rows={5}
                     placeholder="Décrivez votre projet..."
-                    className="bg-transparent border border-border px-4 py-3 font-mono text-sm text-foreground focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors duration-300 resize-none placeholder:text-muted/40"
+                    className="bg-transparent border border-border px-4 py-3 font-mono text-sm text-foreground focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors duration-300 resize-none placeholder:text-muted"
                   />
                 </div>
 
@@ -100,7 +100,7 @@ export default function ContactSection() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="cursor-pointer self-start font-mono text-xs uppercase tracking-[0.25em] px-8 py-3 border border-accent text-accent hover:bg-accent hover:text-[var(--color-bg-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                  className="cursor-pointer self-start font-mono text-xs uppercase tracking-[0.25em] px-8 py-3 border border-accent text-accent hover:bg-accent hover:text-[var(--color-bg-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.97] active:duration-75"
                 >
                   {status === 'sending' ? 'Envoi...' : 'Envoyer'}
                 </button>

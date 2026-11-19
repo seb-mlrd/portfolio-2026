@@ -28,7 +28,7 @@ export default function Footer() {
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative font-mono text-[11px] uppercase tracking-[0.2em] text-muted hover:text-accent transition-colors duration-300"
+                className="group relative font-mono text-[11px] uppercase tracking-[0.2em] text-muted hover:text-accent transition-colors duration-150 active:opacity-60"
               >
                 {s.label}
                 <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-accent transition-all duration-300 group-hover:w-full" />

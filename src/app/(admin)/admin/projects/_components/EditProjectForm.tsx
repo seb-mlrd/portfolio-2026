@@ -4,6 +4,7 @@ import { useTransition, useState } from 'react'
 import { updateProject } from '@/lib/actions/projects'
 import type { Project } from '@prisma/client'
 import TagInput from '../../_components/TagInput'
+import { Field, TextInput } from '../../_components/FormFields'
 
 export default function EditProjectForm({ project }: { project: Project }) {
   const [pending, startTransition] = useTransition()
@@ -54,6 +55,16 @@ export default function EditProjectForm({ project }: { project: Project }) {
           Technologies
         </label>
         <TagInput initialTags={project.tags} />
+      </div>
+
+      {/* Liens */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <Field label="Lien GitHub" hint="Facultatif">
+          <TextInput name="githubUrl" type="url" defaultValue={project.githubUrl ?? ''} placeholder="https://github.com/..." />
+        </Field>
+        <Field label="Lien du projet" hint="Facultatif — site en ligne">
+          <TextInput name="liveUrl" type="url" defaultValue={project.liveUrl ?? ''} placeholder="https://..." />
+        </Field>
       </div>
 
       {/* Publié */}

@@ -1,15 +1,31 @@
+const stack = [
+  'Next.js',
+  'React',
+  'Flutter',
+  'Node.js',
+  'PHP',
+  'Symfony',
+  'REST API',
+  'MariaDB',
+  'Git',
+  'Docker',
+  'LLM',
+  'Claude',
+  'Cursor',
+]
+
 export default function AboutSection() {
   return (
     <section id="presentation" className="py-32 px-6 border-t border-border">
       <div className="max-w-6xl mx-auto">
         {/* Section header */}
-        <div className="flex items-center gap-6 mb-16">
+        <div data-reveal className="flex items-center gap-6 mb-16">
           <span className="font-mono text-xs text-accent tracking-[0.3em]">01.</span>
           <h2 className="font-mono text-2xl md:text-3xl font-bold tracking-tight">Présentation</h2>
           <div className="flex-1 h-px bg-border" />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div data-reveal className="grid md:grid-cols-2 gap-16 items-center">
           {/* Text */}
           <div className="flex flex-col gap-6">
             <p className="text-base leading-relaxed text-muted">
@@ -49,6 +65,27 @@ export default function AboutSection() {
             <span className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-accent" />
             <span className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-accent" />
           </div>
+        </div>
+
+        {/* Stack */}
+        <div data-reveal className="mt-16">
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-6">Stack technique</p>
+          <ul className="flex flex-wrap gap-3" aria-label="Technologies utilisées">
+            {stack.map((tech) => (
+              <li
+                key={tech}
+                className="group flex items-center gap-3 border border-border bg-bg-light px-5 py-3 hover:border-accent/60 transition-colors duration-200"
+              >
+                <span
+                  aria-hidden="true"
+                  className="w-1.5 h-1.5 bg-accent/50 group-hover:bg-accent transition-colors duration-200 shrink-0"
+                />
+                <span className="font-mono text-sm text-foreground/90 group-hover:text-foreground transition-colors duration-200">
+                  {tech}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

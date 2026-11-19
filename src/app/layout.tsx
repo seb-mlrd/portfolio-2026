@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { ColorProvider } from '@/context/ColorContext'
-import LenisProvider from '@/components/LenisProvider'
+import { ColorProvider, themeInitScript } from '@/context/ColorContext'
 import './globals.css'
 
 const geistSans = Geist({
@@ -25,12 +24,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="fr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    // suppressHydrationWarning : data-theme / data-accent sont posés par le script avant hydratation
+    <html lang="fr" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col bg-bg-dark text-foreground">
         <ColorProvider>
-          <LenisProvider>
-            {children}
-          </LenisProvider>
+          {children}
         </ColorProvider>
       </body>
     </html>

@@ -31,7 +31,7 @@ export default async function ProjectPage({
         {/* Back */}
         <Link
           href="/#projets"
-          className="inline-block font-mono text-[10px] uppercase tracking-[0.3em] text-muted hover:text-accent transition-colors duration-200 mb-16"
+          className="inline-block font-mono text-[10px] uppercase tracking-[0.3em] text-muted hover:text-accent transition-colors duration-150 active:opacity-60 mb-16"
         >
           ← Projets
         </Link>
@@ -81,7 +81,7 @@ export default async function ProjectPage({
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-xs uppercase tracking-[0.25em] px-6 py-3 border border-accent text-accent hover:bg-accent hover:text-bg-dark transition-all duration-200"
+                className="font-mono text-xs uppercase tracking-[0.25em] px-6 py-3 border border-accent text-accent hover:bg-accent hover:text-bg-dark transition-all duration-150 active:scale-[0.97] active:duration-75"
               >
                 Voir le projet ↗
               </a>
@@ -91,7 +91,7 @@ export default async function ProjectPage({
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-xs uppercase tracking-[0.25em] px-6 py-3 border border-border text-muted hover:border-accent hover:text-accent transition-all duration-200"
+                className="font-mono text-xs uppercase tracking-[0.25em] px-6 py-3 border border-border text-muted hover:border-accent hover:text-accent transition-all duration-150 active:scale-[0.97] active:duration-75"
               >
                 GitHub ↗
               </a>

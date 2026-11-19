@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { formatPeriod } from '@/lib/format'
-import SectionHeader from './SectionHeader'
+import SectionHeader, { revealDelay } from './SectionHeader'
 
 export default async function ExperienceSection() {
   const experiences = await prisma.experience.findMany({
@@ -21,6 +21,8 @@ export default async function ExperienceSection() {
           {experiences.map((exp, i) => (
             <li
               key={exp.id}
+              data-reveal
+              style={revealDelay(i)}
               className="group grid md:grid-cols-[200px_1fr] gap-4 md:gap-12 py-10 border-b border-border"
             >
               {/* Période */}

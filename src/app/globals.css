@@ -15,7 +15,6 @@
 
   --animate-fade-up: fade-up 0.6s ease forwards;
   --animate-blink: blink 1.1s step-end infinite;
-  --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
 }
 
 @keyframes fade-up {
@@ -34,12 +33,15 @@
   50% { opacity: 0; }
 }
 
-@keyframes glow-pulse {
-  0%, 100% { text-shadow: 0 0 20px var(--color-accent-glow); }
+/* Le halo du titre s'allume une fois à l'arrivée puis se pose — pas de boucle */
+@keyframes glow-in {
+  0% { text-shadow: 0 0 0 transparent; }
   50% { text-shadow: 0 0 40px var(--color-accent-halo), 0 0 80px var(--color-accent-glow); }
+  100% { text-shadow: 0 0 40px var(--color-accent-glow); }
 }
 
 html {
+  /* Scroll natif (inertie du système conservée) ; fluide uniquement pour les ancres */
   scroll-behavior: smooth;
   scroll-padding-top: 4rem;
 }
@@ -58,7 +60,10 @@ html {
   }
 }
 
+/* Thème — data-theme / data-accent posés sur <html> par themeInitScript (ColorContext.tsx).
+   Les hex d'accent doivent rester alignés avec ACCENT_COLORS / ACCENT_COLORS_LIGHT. */
 :root {
+  color-scheme: dark;
   --color-bg-dark: #111116;
   --color-bg-light: #18181f;
   --color-foreground: #f0f0f0;
@@ -66,16 +71,77 @@ html {
   --color-muted: #888888;
   --background: var(--color-bg-dark);
   --foreground: var(--color-foreground);
+  --color-accent: #00d4ff;
   --color-accent-glow: rgba(0, 212, 255, 0.15);
   --color-accent-halo: rgba(0, 212, 255, 0.4);
 }
+:root[data-accent='1'] {
+  --color-accent: #00ffc2;
+  --color-accent-glow: rgba(0, 255, 194, 0.15);
+  --color-accent-halo: rgba(0, 255, 194, 0.4);
+}
+:root[data-accent='2'] {
+  --color-accent: #ff0077;
+  --color-accent-glow: rgba(255, 0, 119, 0.15);
+  --color-accent-halo: rgba(255, 0, 119, 0.4);
+}
 
+:root[data-theme='light'] {
+  color-scheme: light;
+  --color-bg-dark: #d9d5c8;
+  --color-bg-light: #e4e0d4;
+  --color-foreground: #111116;
+  --color-border: #b8b4a8;
+  --color-muted: #4a4845;
+  --color-accent: #006088;
+  --color-accent-glow: rgba(0, 96, 136, 0.12);
+  --color-accent-halo: rgba(0, 96, 136, 0.28);
+}
+:root[data-theme='light'][data-accent='1'] {
+  --color-accent: #00684e;
+  --color-accent-glow: rgba(0, 104, 78, 0.12);
+  --color-accent-halo: rgba(0, 104, 78, 0.28);
+}
+:root[data-theme='light'][data-accent='2'] {
+  --color-accent: #b40053;
+  --color-accent-glow: rgba(180, 0, 83, 0.12);
+  --color-accent-halo: rgba(180, 0, 83, 0.28);
+}
 
-/* Transition fluide lors du changement de thème accent */
+/* Changement de thème / d'accent : toute la page (fonds compris) bascule ensemble,
+   uniquement pendant la bascule — les survols gardent leur propre vitesse le reste du temps. */
 @media (prefers-reduced-motion: no-preference) {
-  a, button, span, p, h1, h2, h3, h4, svg, path {
-    transition: color 0.4s ease, border-color 0.4s ease, background-color 0.4s ease, text-shadow 0.4s ease;
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition: color 0.4s ease, background-color 0.4s ease, border-color 0.4s ease,
+      text-shadow 0.4s ease, fill 0.4s ease, stroke 0.4s ease, outline-color 0.4s ease;
   }
+}
+
+/* Apparition au scroll — voir components/ScrollReveal.tsx */
+html.reveal-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+  transition-delay: var(--reveal-delay, 0ms), var(--reveal-delay, 0ms), 0ms, 0ms;
+}
+html.reveal-ready [data-reveal='left'] {
+  transform: translateX(-24px);
+}
+html.reveal-ready [data-reveal='line'] {
+  opacity: 1;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+html.reveal-ready [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
 }
 
 body {
@@ -97,4 +163,12 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-accent);
+}
+
+/* Tailwind v4 retire le cursor pointer des boutons par défaut */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }

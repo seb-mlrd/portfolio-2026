@@ -3,6 +3,7 @@
 import { useTransition, useState } from 'react'
 import { createProject } from '@/lib/actions/projects'
 import TagInput from '../../_components/TagInput'
+import { Field, TextInput } from '../../_components/FormFields'
 
 function slugify(title: string): string {
   return title
@@ -68,6 +69,16 @@ export default function ProjectForm() {
           Technologies
         </label>
         <TagInput />
+      </div>
+
+      {/* Liens */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <Field label="Lien GitHub" hint="Facultatif">
+          <TextInput name="githubUrl" type="url" placeholder="https://github.com/..." />
+        </Field>
+        <Field label="Lien du projet" hint="Facultatif — site en ligne">
+          <TextInput name="liveUrl" type="url" placeholder="https://..." />
+        </Field>
       </div>
 
       {/* Publié */}
