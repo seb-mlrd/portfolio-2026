@@ -1,0 +1,47 @@
+/* Rendu du devis : partagé par la preview, la page publique et le PDF.
+   Couleurs fixes : le document ne suit pas le thème du site. */
+.qd {
+  color: #1a1a1a;
+  background: #fff;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+  font-size: 10pt;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.qd p, .qd h1, .qd h2 { margin: 0; }
+.qd-pre { white-space: pre-line; }
+.qd-muted { color: #595959; }
+.qd-label { font-size: 7.5pt; text-transform: uppercase; letter-spacing: 0.08em; color: #595959; margin-bottom: 1.5mm !important; }
+.qd-head { display: flex; justify-content: space-between; gap: 10mm; }
+.qd-logo { max-height: 18mm; max-width: 60mm; margin-bottom: 4mm; }
+.qd-name { font-weight: 600; font-size: 11pt; }
+.qd-title { text-align: right; flex-shrink: 0; }
+.qd-title h1 { font-size: 22pt; font-weight: 600; line-height: 1.1; }
+.qd-title p { margin-top: 1mm; }
+.qd-client { margin: 10mm 0 0 auto; width: 80mm; padding: 4mm 5mm; border: 0.3mm solid #cfcfcf; }
+.qd-table { width: 100%; border-collapse: collapse; margin-top: 10mm; }
+.qd-table th { text-align: left; font-size: 8pt; font-weight: 600; padding: 2.5mm 2mm; border-bottom: 0.5mm solid #1a1a1a; }
+.qd-table td { padding: 3mm 2mm; vertical-align: top; border-bottom: 0.2mm solid #dcdcdc; }
+.qd-table th:first-child, .qd-table td:first-child { padding-left: 0; }
+.qd-table th:last-child, .qd-table td:last-child { padding-right: 0; }
+.qd-num { text-align: right !important; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.qd-desc { font-size: 9pt; color: #595959; white-space: pre-line; }
+.qd-totals { margin: 6mm 0 0 auto; width: 80mm; break-inside: avoid; }
+.qd-totals > div { display: flex; justify-content: space-between; gap: 5mm; padding: 1.2mm 0; }
+.qd-total { font-weight: 600; font-size: 12pt; border-top: 0.5mm solid #1a1a1a; margin-top: 1mm; }
+.qd-vat { font-size: 8.5pt; }
+.qd-block { margin-top: 7mm; break-inside: avoid; }
+.qd-sign { display: flex; gap: 8mm; margin-top: 9mm; break-inside: avoid; }
+.qd-sign > div { flex: 1; min-height: 30mm; border: 0.3mm solid #cfcfcf; padding: 4mm; }
+.qd-legal { margin-top: 8mm; padding-top: 3mm; border-top: 0.2mm solid #dcdcdc; font-size: 8pt; color: #595959; white-space: pre-line; }
+
+/* À l'écran : une feuille A4 ; à l'impression les marges viennent de @page */
+.qd-paper { width: 210mm; min-height: 297mm; padding: 16mm 16mm 20mm; background: #fff; box-sizing: border-box; }
+.qd-scroll { overflow-x: auto; }
+
+@media print {
+  .qd-paper { width: auto; min-height: 0; padding: 0; }
+  .qd-table thead { display: table-header-group; }
+  .qd-table tr { break-inside: avoid; }
+  .qd { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

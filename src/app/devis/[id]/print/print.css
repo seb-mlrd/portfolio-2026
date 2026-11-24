@@ -1,0 +1,14 @@
+@page {
+  size: A4;
+  margin: 16mm 16mm 20mm;
+}
+
+/* Neutralise le layout du site : fond sombre et body flex casseraient la pagination */
+html, body {
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+  background: #fff !important;
+  color-scheme: light !important;
+}
+nextjs-portal { display: none !important; }

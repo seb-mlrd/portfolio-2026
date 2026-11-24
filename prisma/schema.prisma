@@ -131,3 +131,146 @@ enum Role {
   USER
   ADMIN
 }
+
+// ─── Devis ───────────────────────────────────────────────────────────────────
+// Montants en centimes, quantités en centièmes (0,5 jour = 50), taux en points de base (20 % = 2000)
+
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  contactName String?
+  email       String
+  address     String   @db.Text
+  siret       String?
+  notes       String?  @db.Text
+  quotes      Quote[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Service {
+  id             String      @id @default(cuid())
+  label          String
+  description    String?     @db.Text
+  unitPriceCents Int
+  unit           String
+  active         Boolean     @default(true)
+  lines          QuoteLine[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+// « expiré » n'est pas stocké : il se déduit de SENT + validUntil (voir lib/quotes/status.ts)
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REFUSED
+}
+
+model Quote {
+  id              String      @id @default(cuid())
+  number          String      @unique
+  year            Int
+  sequence        Int
+  version         Int         @default(1)
+  parentId        String?     @unique // unique : une seule version suivante par devis
+  parent          Quote?      @relation("QuoteVersions", fields: [parentId], references: [id], onDelete: Restrict)
+  child           Quote?      @relation("QuoteVersions")
+  publicToken     String      @unique
+  clientId        String
+  client          Client      @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  status          QuoteStatus @default(DRAFT)
+  issueDate       DateTime    @db.Date
+  validUntil      DateTime    @db.Date
+  paymentTerms    String      @db.Text
+  depositPercent  Int         @default(0)
+  notes           String?     @db.Text
+  vatEnabled      Boolean     @default(false)
+  vatRateBps      Int         @default(0)
+  vatMention      String
+  subtotalCents   Int
+  vatCents        Int
+  totalCents      Int
+  depositCents    Int
+  // Copies figées à l'envoi : le devis ne bouge plus si le client ou l'émetteur changent
+  clientSnapshot  Json?
+  issuerSnapshot  Json?
+  pdfUrl          String?
+  sendRequestedAt DateTime? // envoi confié à n8n : verrouille le brouillon
+  sentAt          DateTime?
+  acceptedAt      DateTime?
+  signerName      String?
+  signerIp        String?
+  refusedAt       DateTime?
+  refusalReason   String?     @db.Text
+  archivedAt      DateTime?
+  lines           QuoteLine[]
+  events          QuoteEvent[]
+  pdf             QuotePdf?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([year, sequence, version])
+  @@index([status])
+  @@index([clientId])
+}
+
+model QuoteLine {
+  id                 String   @id @default(cuid())
+  quoteId            String
+  quote              Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  serviceId          String?
+  service            Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  label              String
+  description        String?  @db.Text
+  quantityHundredths Int
+  unit               String
+  unitPriceCents     Int
+  totalCents         Int
+  position           Int
+
+  @@index([quoteId])
+}
+
+model QuoteEvent {
+  id        String   @id @default(cuid())
+  quoteId   String
+  quote     Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  type      String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([quoteId, createdAt])
+}
+
+model QuotePdf {
+  quoteId   String   @id
+  quote     Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
+// Dernier numéro attribué par année
+model QuoteCounter {
+  year Int @id
+  last Int
+}
+
+// Ligne unique (id = "default")
+model BusinessSettings {
+  id             String   @id @default("default")
+  name           String
+  address        String   @db.Text
+  siret          String
+  email          String
+  phone          String?
+  logoPath       String?
+  legalMentions  String   @db.Text
+  paymentTerms   String   @db.Text
+  depositPercent Int      @default(30)
+  vatEnabled     Boolean  @default(false)
+  vatRateBps     Int      @default(2000)
+  vatMention     String
+  updatedAt      DateTime @updatedAt
+}

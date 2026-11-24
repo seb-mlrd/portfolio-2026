@@ -1,0 +1,305 @@
+{
+  "id": "portfolioQuoteAccepted",
+  "name": "Devis — accepté",
+  "nodes": [
+    {
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "quote-accepted",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "webhookId": "quote-accepted"
+    },
+    {
+      "id": "calcul-hmac",
+      "name": "Calcul HMAC",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "action": "hmac",
+        "binaryData": true,
+        "binaryPropertyName": "data",
+        "type": "SHA256",
+        "dataPropertyName": "computedSignature",
+        "encoding": "hex"
+      },
+      "credentials": {
+        "crypto": {
+          "id": "portfolioHmacCred",
+          "name": "Portfolio HMAC"
+        }
+      }
+    },
+    {
+      "id": "signature-valide-?",
+      "name": "Signature valide ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "0",
+              "leftValue": "={{ $json.computedSignature }}",
+              "rightValue": "={{ $('Webhook').first().json.headers['x-signature'] ?? 'absente' }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "1",
+              "leftValue": "={{ $('Webhook').first().json.body.event }}",
+              "rightValue": "quote.accepted",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "2",
+              "leftValue": "={{ Math.abs(Date.now() - Number($('Webhook').first().json.body.timestamp)) < 300000 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "refuser-(401)",
+      "name": "Refuser (401)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        200
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"error\":\"Invalid signature\"}",
+        "options": {
+          "responseCode": 401
+        }
+      }
+    },
+    {
+      "id": "accepter-(202)",
+      "name": "Accepter (202)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"ok\":true}",
+        "options": {
+          "responseCode": 202
+        }
+      }
+    },
+    {
+      "id": "config",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "appUrl",
+              "name": "appUrl",
+              "value": "http://host.docker.internal:3000",
+              "type": "string"
+            },
+            {
+              "id": "fromEmail",
+              "name": "fromEmail",
+              "value": "Devis <devis@example.com>",
+              "type": "string"
+            },
+            {
+              "id": "ownerEmail",
+              "name": "ownerEmail",
+              "value": "moi@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "devis",
+      "name": "Devis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('Config').first().json.appUrl }}/api/n8n/quotes/{{ $('Webhook').first().json.body.quoteId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "portfolioApiCred",
+          "name": "Portfolio API"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "me-notifier",
+      "name": "Me notifier",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "={{ $('Config').first().json.fromEmail }}",
+        "toEmail": "={{ $('Config').first().json.ownerEmail }}",
+        "subject": "=Devis {{ $('Devis').first().json.number }} accepté",
+        "emailFormat": "text",
+        "text": "=Le devis {{ $('Devis').first().json.number }} a été accepté.\n\nClient : {{ $('Devis').first().json.client.name }}\nSignataire : {{ $('Devis').first().json.signerName }}\nMontant : {{ ($('Devis').first().json.totalCents / 100).toFixed(2).replace('.', ',') }} €\nLe : {{ DateTime.fromISO($('Devis').first().json.acceptedAt).setZone('Europe/Paris').toFormat('dd/MM/yyyy HH:mm') }}\n\n{{ $('Devis').first().json.publicUrl }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "smtp": {
+          "id": "portfolioSmtpCred",
+          "name": "Portfolio SMTP"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Calcul HMAC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcul HMAC": {
+      "main": [
+        [
+          {
+            "node": "Signature valide ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signature valide ?": {
+      "main": [
+        [
+          {
+            "node": "Accepter (202)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Refuser (401)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Accepter (202)": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Devis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Devis": {
+      "main": [
+        [
+          {
+            "node": "Me notifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris"
+  },
+  "pinData": {},
+  "active": false
+}
