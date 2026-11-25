@@ -2,7 +2,9 @@ import 'server-only'
 import { prisma } from '@/lib/prisma'
 import { createPrintToken, signHmac, verifyBearer, verifyPrintToken } from './crypto'
 import { addDays, todayParis } from './dates'
-import { quoteInclude } from './view'
+import { getSettings } from './settings'
+import { displayStatus } from './status'
+import { quoteInclude, toQuoteView } from './view'
 
 function env(name: string): string {
   const value = process.env[name]
@@ -41,12 +43,36 @@ const WEBHOOKS = {
   'quote.accepted': 'N8N_WEBHOOK_QUOTE_ACCEPTED_URL',
 } as const
 
+/** Devis complet tel que n8n l'attend */
+export async function quotePayload(id: string) {
+  const quote = await getQuote(id)
+  if (!quote) return null
+  return {
+    id: quote.id,
+    status: displayStatus(quote),
+    sentAt: quote.sentAt,
+    acceptedAt: quote.acceptedAt,
+    signerName: quote.signerName,
+    ...toQuoteView(quote, await getSettings()),
+    printUrl: printUrl(quote.id),
+    publicUrl: publicQuoteUrl(quote.publicToken),
+  }
+}
+
 export async function callN8n(event: keyof typeof WEBHOOKS, quoteId: string): Promise<WebhookResult> {
   try {
-    const body = JSON.stringify({ quoteId, event, timestamp: Date.now() })
+    const payload = { quoteId, event, timestamp: Date.now() }
+    const sending = event === 'quote.send'
+    const body = JSON.stringify(sending ? { ...payload, quote: await quotePayload(quoteId) } : payload)
     const res = await fetch(env(WEBHOOKS[event]), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Signature': signHmac(body, env('N8N_WEBHOOK_SECRET')) },
+      headers: {
+        'Content-Type': 'application/json',
+        // L'envoi est protégé par le Header Auth du webhook, l'acceptation par une signature
+        ...(sending
+          ? { Authorization: `Bearer ${env('N8N_API_KEY')}` }
+          : { 'X-Signature': signHmac(body, env('N8N_WEBHOOK_SECRET')) }),
+      },
       body,
       redirect: 'error',
       signal: AbortSignal.timeout(10_000),

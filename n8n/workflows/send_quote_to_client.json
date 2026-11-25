@@ -1,0 +1,1162 @@
+{
+  "id": "SQwUDEhIYaBCVOa5",
+  "name": "send_quote_to_client",
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Europe/Paris"
+  },
+  "active": false,
+  "pinData": {},
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "send-quote",
+        "authentication": "headerAuth",
+        "responseMode": "onReceived",
+        "options": {
+          "responseCode": {
+            "values": {
+              "responseCode": 202
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4d52390a-d2bf-4d16-8f07-fe54cbbdbfcd",
+      "name": "Réception de la demande",
+      "webhookId": "c51629e6-2fb9-4d0f-ba62-c8dcc5e68642",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "tQoOVbi7lDU9751y",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0d904fa8-6a90-4054-bc84-47e9160c95b2",
+              "name": "appUrl",
+              "value": "http://localhost:3000",
+              "type": "string"
+            },
+            {
+              "id": "6f586920-060e-47c4-83ec-6d3cdc8577c2",
+              "name": "gotenbergUrl",
+              "value": "http://127.0.0.1:3002",
+              "type": "string"
+            },
+            {
+              "id": "8dab4144-decd-4697-9125-7b473f41f8ed",
+              "name": "nomExpediteur",
+              "value": "À REMPLIR",
+              "type": "string"
+            },
+            {
+              "id": "e97a3cf3-bda1-4c1f-a48a-7ea3fbd44580",
+              "name": "emailNotification",
+              "value": "a-remplir@example.invalid",
+              "type": "string"
+            },
+            {
+              "id": "7381c4a7-9c64-4e80-89a6-182bb1485d19",
+              "name": "modeTest",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "c622ff7f-e22a-4bba-bbd5-64526975de3d",
+              "name": "emailTest",
+              "value": "a-remplir@example.invalid",
+              "type": "string"
+            },
+            {
+              "id": "0fc92ab9-5271-4127-899d-378a172242f7",
+              "name": "delaiRelance1Jours",
+              "value": 5,
+              "type": "number"
+            },
+            {
+              "id": "47b41e43-5218-4ac8-8e54-2eda0370c313",
+              "name": "delaiRelance2Jours",
+              "value": 7,
+              "type": "number"
+            },
+            {
+              "id": "80a8672f-14ec-4878-b02c-2afa470bcb65",
+              "name": "quoteId",
+              "value": "={{ String($json.body?.quoteId ?? '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "80fdd4d3-c161-47fa-aa1d-b9a7646d6346",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "url": "https://gmail.googleapis.com/gmail/v1/users/me/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "=in:sent subject:\"Devis {{ $('Réception de la demande').first().json.body.quote.number }}\" to:{{ $('Config').first().json.modeTest ? $('Config').first().json.emailTest : $('Réception de la demande').first().json.body.quote.client.email }}"
+            },
+            {
+              "name": "maxResults",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "d28f71bb-66e2-4557-94be-36fa5eb44abf",
+      "name": "Chercher un envoi précédent",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "h6ndZPQYEeWFeIdd",
+          "name": "Google account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2b21ddb0-bb84-4767-aa8a-bc03288c3791",
+              "leftValue": "={{ ($json.messages ?? []).length === 0 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "7d399a8a-9b49-459d-b5c9-156f79960147",
+      "name": "Aucun mail déjà parti ?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e5119117-c25c-4b58-9a30-370883e5d81e",
+              "name": "etape",
+              "value": "Contrôle anti-doublon",
+              "type": "string"
+            },
+            {
+              "id": "2194833f-f3ab-497e-a2f3-4b5986b34e71",
+              "name": "error",
+              "value": "Un mail pour ce devis figure déjà dans les messages envoyés : rien n'a été renvoyé. Le devis est resté en cours d'envoi, vérifie-le dans l'admin.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        200
+      ],
+      "id": "6c008b3d-3520-4bca-a120-9c689b11766a",
+      "name": "Signaler le doublon"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.gotenbergUrl }}/forms/chromium/convert/url",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Gotenberg-Output-Filename",
+              "value": "=Devis-{{ $('Réception de la demande').first().json.body.quote.number }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formData",
+              "name": "url",
+              "value": "={{ $('Réception de la demande').first().json.body.quote.printUrl }}"
+            },
+            {
+              "parameterType": "formData",
+              "name": "paperWidth",
+              "value": "8.27"
+            },
+            {
+              "parameterType": "formData",
+              "name": "paperHeight",
+              "value": "11.7"
+            },
+            {
+              "parameterType": "formData",
+              "name": "printBackground",
+              "value": "true"
+            },
+            {
+              "parameterType": "formData",
+              "name": "preferCssPageSize",
+              "value": "true"
+            },
+            {
+              "parameterType": "formData",
+              "name": "skipNetworkIdleEvent",
+              "value": "false"
+            },
+            {
+              "parameterType": "formData",
+              "name": "waitForExpression",
+              "value": "document.fonts.status === 'loaded'"
+            },
+            {
+              "parameterType": "formData",
+              "name": "failOnHttpStatusCodes",
+              "value": "[499,599]"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "id": "947f4d8a-a7a4-4fd6-ad38-87f55e549384",
+      "name": "Générer le PDF",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.appUrl }}/api/n8n/quotes/{{ encodeURIComponent($('Config').first().json.quoteId) }}/pdf",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "72eb79c0-f48b-4a28-8111-bc41267321f7",
+      "name": "Déposer le PDF dans l’app",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "tQoOVbi7lDU9751y",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const config = $('Config').first().json;\nconst devis = $('Réception de la demande').first().json.body.quote;\nconst esc = (s) => String(s ?? '').replace(/[&<>\"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' })[c]);\nconst montant = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(devis.totalCents / 100);\nconst validite = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(devis.validUntil));\nconst nom = devis.client.contactName;\nconst salutation = nom ? 'Bonjour ' + esc(nom) + ',' : 'Bonjour,';\nconst bouton = '<p style=\"margin:28px 0\"><a href=\"' + esc(devis.publicUrl) + '\" style=\"background:#1f2937;color:#ffffff;padding:12px 22px;border-radius:4px;text-decoration:none\">Consulter et accepter le devis</a></p>';\nconst signature = '<p>Cordialement,<br>' + esc(config.nomExpediteur) + (devis.issuer.phone ? '<br>' + esc(devis.issuer.phone) : '') + '</p>';\nconst page = (corps) => '<div style=\"font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#1f2937;max-width:560px\"><p>' + salutation + '</p>' + corps + bouton + signature + '</div>';\nconst suffixe = devis.vatEnabled ? ' TTC' : '';\n\nreturn [{\n  json: {\n    destinataire: config.modeTest ? config.emailTest : devis.client.email,\n    objet: 'Devis ' + devis.number + ' – ' + config.nomExpediteur,\n    html: page('<p>Veuillez trouver ci-joint votre devis :</p><ul><li>Numéro : <strong>' + esc(devis.number) + '</strong></li><li>Montant total : <strong>' + montant + suffixe + '</strong></li><li>Valable jusqu’au : <strong>' + validite + '</strong></li></ul><p>Vous pouvez le consulter et l’accepter en ligne :</p>'),\n    relance1: page('<p>Je me permets de revenir vers vous au sujet du devis ' + esc(devis.number) + '. Avez-vous pu en prendre connaissance ? Je reste à votre disposition pour toute question.</p>'),\n    relance2: page('<p>Sauf erreur de ma part, je n’ai pas eu de retour sur le devis ' + esc(devis.number) + ', valable jusqu’au ' + validite + '. Souhaitez-vous que nous en discutions ?</p>'),\n    pdfUrl: $json.pdfUrl,\n  },\n  binary: $('Générer le PDF').first().binary,\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        0
+      ],
+      "id": "c4b13e3f-ba34-4f03-a801-f17ae2c3aa43",
+      "name": "Préparer le mail",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "sendTo": "={{ $json.destinataire }}",
+        "subject": "={{ $json.objet }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "={{ $('Config').first().json.nomExpediteur }}",
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "data"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1540,
+        0
+      ],
+      "id": "b2918e7b-246a-4442-bc42-c754e2694854",
+      "name": "Envoyer le devis",
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "h6ndZPQYEeWFeIdd",
+          "name": "Google account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.appUrl }}/api/n8n/quotes/{{ encodeURIComponent($('Config').first().json.quoteId) }}/sent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ pdfUrl: $('Préparer le mail').first().json.pdfUrl }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        0
+      ],
+      "id": "1622de6e-f0a2-405a-8ac3-9af8ddaba09d",
+      "name": "Marquer comme envoyé",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "tQoOVbi7lDU9751y",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Config').first().json.modeTest ? 1 : $('Config').first().json.delaiRelance1Jours * 1440 }}",
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1980,
+        0
+      ],
+      "id": "ce5a982a-74e2-4a91-9a6b-78ca0bc0350a",
+      "name": "Attendre avant relance 1",
+      "webhookId": "81aa19d7-491c-47a9-8817-8efef636a972"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('Config').first().json.appUrl }}/api/n8n/quotes/{{ encodeURIComponent($('Config').first().json.quoteId) }}/status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2200,
+        0
+      ],
+      "id": "29a0a531-927b-4e10-a0f3-6bc39ba8020c",
+      "name": "Statut avant relance 1",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "tQoOVbi7lDU9751y",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "612f14f3-5bc6-4833-b870-b9fbae84ec2b",
+              "leftValue": "={{ $json.status === 'envoyé' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2420,
+        0
+      ],
+      "id": "8dff7ad5-fecc-40c8-9737-1e4bdff02ece",
+      "name": "Toujours en attente ? (1)"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "thread",
+        "operation": "reply",
+        "threadId": "={{ $('Envoyer le devis').first().json.threadId }}",
+        "messageId": "={{ $('Envoyer le devis').first().json.id }}",
+        "message": "={{ $('Préparer le mail').first().json.relance1 }}",
+        "options": {
+          "appendAttribution": false,
+          "replyToRecipientsOnly": true,
+          "senderName": "={{ $('Config').first().json.nomExpediteur }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2640,
+        0
+      ],
+      "id": "d593ad7f-bfeb-40a9-b38c-62d414cfd707",
+      "name": "Envoyer la relance 1",
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "h6ndZPQYEeWFeIdd",
+          "name": "Google account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Config').first().json.modeTest ? 1 : $('Config').first().json.delaiRelance2Jours * 1440 }}",
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2860,
+        0
+      ],
+      "id": "f436010c-08e9-4145-aaa8-5a6886dd573b",
+      "name": "Attendre avant relance 2",
+      "webhookId": "2b23434f-e260-4f73-ac30-4691eac8573b"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('Config').first().json.appUrl }}/api/n8n/quotes/{{ encodeURIComponent($('Config').first().json.quoteId) }}/status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3080,
+        0
+      ],
+      "id": "1f56ac8c-b3c7-4119-b554-d0d7b5105e27",
+      "name": "Statut avant relance 2",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "tQoOVbi7lDU9751y",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5b0706e1-c71f-4567-aee8-4a6bd960ac26",
+              "leftValue": "={{ $json.status === 'envoyé' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3300,
+        0
+      ],
+      "id": "d956a27b-c7bb-443d-9d6f-d1222ae04523",
+      "name": "Toujours en attente ? (2)"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "thread",
+        "operation": "reply",
+        "threadId": "={{ $('Envoyer le devis').first().json.threadId }}",
+        "messageId": "={{ $('Envoyer le devis').first().json.id }}",
+        "message": "={{ $('Préparer le mail').first().json.relance2 }}",
+        "options": {
+          "appendAttribution": false,
+          "replyToRecipientsOnly": true,
+          "senderName": "={{ $('Config').first().json.nomExpediteur }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3520,
+        0
+      ],
+      "id": "8b4b0b02-89df-418c-bf02-f0892322a51d",
+      "name": "Envoyer la relance 2",
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "h6ndZPQYEeWFeIdd",
+          "name": "Google account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3300,
+        200
+      ],
+      "id": "ee7c4524-fc1a-4b01-b8fe-f87ab9f8db1e",
+      "name": "Fin : plus de relance"
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Config').first().json.modeTest ? 1 : $('Config').first().json.delaiRelance2Jours * 1440 }}",
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3740,
+        0
+      ],
+      "id": "eb3a569e-781d-4c83-8072-599289a91fa2",
+      "name": "Attendre une réponse finale",
+      "webhookId": "59498011-671c-4fb1-8cc0-97fc26779a46"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('Config').first().json.appUrl }}/api/n8n/quotes/{{ encodeURIComponent($('Config').first().json.quoteId) }}/status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3960,
+        0
+      ],
+      "id": "3296376c-a937-404a-af1a-1ff4ede01a76",
+      "name": "Statut final",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "tQoOVbi7lDU9751y",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0a581ba3-a997-48f0-905d-a4b70ad7a97c",
+              "leftValue": "={{ $json.status === 'envoyé' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4180,
+        0
+      ],
+      "id": "c65a5941-8344-41f4-a245-1b930c512a60",
+      "name": "Toujours sans réponse ?"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "sendTo": "={{ $('Config').first().json.emailNotification }}",
+        "subject": "=Devis {{ $('Réception de la demande').first().json.body.quote.number }} : sans réponse après deux relances",
+        "emailType": "text",
+        "message": "=Le devis {{ $('Réception de la demande').first().json.body.quote.number }} ({{ $('Config').first().json.quoteId }}) est toujours sans réponse. À toi de relancer le client.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        4400,
+        0
+      ],
+      "id": "bde9da61-e4f1-456b-87d8-8b9eb331555a",
+      "name": "Notifier : relance manuelle",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "h6ndZPQYEeWFeIdd",
+          "name": "Google account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bd812665-ff7b-45f4-8261-ce35d1cf9e95",
+              "name": "etape",
+              "value": "={{ $json.etape ?? $prevNode.name }}",
+              "type": "string"
+            },
+            {
+              "id": "b655e7d0-1f81-4fad-96da-66e6a9de7f4b",
+              "name": "message",
+              "value": "={{ typeof $json.error === 'string' ? $json.error : ($json.error?.message ?? JSON.stringify($json.error ?? $json)) }}",
+              "type": "string"
+            },
+            {
+              "id": "710ee5ba-73d5-4431-998b-706380f9d055",
+              "name": "quoteId",
+              "value": "={{ $('Config').first().json.quoteId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1980,
+        400
+      ],
+      "id": "a4cc81d4-93fb-4ea2-8011-075d17063af2",
+      "name": "Préparer l’alerte"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "sendTo": "={{ $('Config').first().json.emailNotification }}",
+        "subject": "=Échec devis : {{ $json.etape }}",
+        "emailType": "text",
+        "message": "=Devis : {{ $json.quoteId }}\nÉtape : {{ $json.etape }}\nMessage : {{ $json.message }}\nExécution n8n : {{ $execution.id }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2200,
+        400
+      ],
+      "id": "bae4e945-d7cd-4b17-bce0-1e9fbd82440f",
+      "name": "Notifier l’erreur",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "h6ndZPQYEeWFeIdd",
+          "name": "Google account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Attendre avant relance 1": {
+      "main": [
+        [
+          {
+            "node": "Statut avant relance 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Statut avant relance 1": {
+      "main": [
+        [
+          {
+            "node": "Toujours en attente ? (1)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Toujours en attente ? (1)": {
+      "main": [
+        [
+          {
+            "node": "Envoyer la relance 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fin : plus de relance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoyer la relance 1": {
+      "main": [
+        [
+          {
+            "node": "Attendre avant relance 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attendre avant relance 2": {
+      "main": [
+        [
+          {
+            "node": "Statut avant relance 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Statut avant relance 2": {
+      "main": [
+        [
+          {
+            "node": "Toujours en attente ? (2)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Toujours en attente ? (2)": {
+      "main": [
+        [
+          {
+            "node": "Envoyer la relance 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fin : plus de relance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoyer la relance 2": {
+      "main": [
+        [
+          {
+            "node": "Attendre une réponse finale",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marquer comme envoyé": {
+      "main": [
+        [
+          {
+            "node": "Attendre avant relance 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attendre une réponse finale": {
+      "main": [
+        [
+          {
+            "node": "Statut final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Statut final": {
+      "main": [
+        [
+          {
+            "node": "Toujours sans réponse ?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Toujours sans réponse ?": {
+      "main": [
+        [
+          {
+            "node": "Notifier : relance manuelle",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fin : plus de relance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer l’alerte": {
+      "main": [
+        [
+          {
+            "node": "Notifier l’erreur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Réception de la demande": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Chercher un envoi précédent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chercher un envoi précédent": {
+      "main": [
+        [
+          {
+            "node": "Aucun mail déjà parti ?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aucun mail déjà parti ?": {
+      "main": [
+        [
+          {
+            "node": "Générer le PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Signaler le doublon",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Générer le PDF": {
+      "main": [
+        [
+          {
+            "node": "Déposer le PDF dans l’app",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Déposer le PDF dans l’app": {
+      "main": [
+        [
+          {
+            "node": "Préparer le mail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le mail": {
+      "main": [
+        [
+          {
+            "node": "Envoyer le devis",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoyer le devis": {
+      "main": [
+        [
+          {
+            "node": "Marquer comme envoyé",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signaler le doublon": {
+      "main": [
+        [
+          {
+            "node": "Préparer l’alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "description": "Envoie un devis reçu par webhook (PDF Gotenberg, mail Gmail), le marque envoyé dans l’app, puis relance à 5 et 7 jours. Webhook protégé par Header Auth. Réglages dans le nœud Config ; modeTest redirige les mails et ramène les attentes à 1 minute."
+}
